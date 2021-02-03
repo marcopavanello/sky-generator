@@ -40,7 +40,7 @@ def calc_pixel(xmin, xmax, pix_array):
             # normalize camera rotation
             cam_dir = fun.geographical_to_direction(cam_lat, cam_lon)
             # get spectrum from camera direction
-            spectrum = light.single_scattering(cam_dir)
+            spectrum = light.multiple_scattering(cam_dir)
             # convert spectrum to xyz
             xyz = fun.spectrum_to_xyz(spectrum)
             # convert xyz to rgb

@@ -34,23 +34,28 @@ def geographical_to_direction(lat, lon):
     return np.array([cos(lat) * cos(lon), cos(lat) * sin(lon), sin(lat)])
 
 
-def atmosphere_intersection(pos, dir):
-    b = -2 * np.dot(dir, -pos)
-    c = np.sum(pos * pos) - ATMOSPHERE_RADIUS * ATMOSPHERE_RADIUS
+def atmosphere_intersection(ray_origin, ray_direction):
+    b = -2 * np.dot(ray_direction, -ray_origin)
+    c = np.dot(ray_origin, ray_origin) - ATMOSPHERE_RADIUS * ATMOSPHERE_RADIUS
     t = (-b + sqrt(b * b - 4 * c)) / 2
-    return pos + dir * t
+    return ray_origin + ray_direction * t
 
 
-def surface_intersection(pos, dir):
-    if dir[2] >= 0:
-        return False
-    b = -2 * np.dot(dir, -pos)
-    c = np.sum(pos * pos) - EARTH_RADIUS * EARTH_RADIUS
-    t = b * b - 4 * c
-    if t >= 0:
-        return True
+def surface_intersection(ray_origin, ray_direction):
+    b = 2 * np.dot(ray_direction, ray_origin)
+    c = np.dot(ray_origin, ray_origin) - EARTH_RADIUS * EARTH_RADIUS
+    discriminant = b * b - 4 * c
+    if discriminant < 0:
+        return -1
     else:
-        return False
+        t = (-b - sqrt(discriminant)) / 2
+        if t > 0:
+            return t
+        t = (-b + sqrt(discriminant)) / 2
+        if t > 0:
+            return t
+        else:
+            return -1
 
 
 def spectrum_to_xyz(spectrum):
