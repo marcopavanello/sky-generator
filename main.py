@@ -45,7 +45,7 @@ def calc_pixel(xmin, xmax, pix_array):
             xyz = fun.spectrum_to_xyz(spectrum)
             # convert xyz to rgb
             rgb = fun.xyz_to_rgb(xyz, exposure)
-            rgb_int = np.array(rgb * 255, np.int)
+            rgb_int = np.array(rgb * 255, int)
             # print to pixels array in shared memory
             pos = i * 3 * pixels_y + j * 3
             pix_array[pos] = rgb_int[0]

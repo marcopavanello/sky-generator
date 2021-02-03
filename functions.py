@@ -76,5 +76,5 @@ def xyz_to_rgb(xyz, exposure):
     # clamp sRGB between 0 and 1
     sRGB_2 = np.clip(sRGB_log, 1e-5, 1)
     # apply look contrast
-    index = np.array(sRGB_2 * 4095, np.int)
+    index = np.array(sRGB_2 * 4095, int)
     return np.array([FILMIC_LOOK[i] for i in index])

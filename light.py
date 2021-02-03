@@ -14,7 +14,7 @@ cam_pos = np.array([0, 0, EARTH_RADIUS + cam_altitude])
 # convert sun latitude and longitude to vector
 sun_dir = fun.geographical_to_direction(radians(sun_lat), 0)
 coefficients = np.array([RAYLEIGH_COEFFICIENT, 1.11 *
-                         MIE_COEFFICIENT, OZONE_COEFFICIENT], dtype=np.object)
+                         MIE_COEFFICIENT, OZONE_COEFFICIENT], dtype=object)
 density_multipliers = np.array([air_density, dust_density, ozone_density])
 
 
