@@ -41,18 +41,26 @@ def ray_optical_depth(ray_origin, ray_direction, ray_length):
 
 
 def multiple_scattering(ray_direction):
+    '''
+    still using 1 single sample because it still gives errors,
+    when ready we can use multiple samples per pixel as Monte Carlo method.
+    the algorithm is (correct me if i'm wrong):
+    - start ray from camera, end at random position, accumulate light from sun -> end point -> camera
+    - then shoot a ray at random direction from previous end point, and accumulate sun -> new end point -> old end point -> camera
+    - continue till the bounces end
+    '''
     ray_origin = camera_position
     throughput = 0
 
-    # light bounces
+    # light bounces per sample
     for _ in range(4):
-        # if Earth surface isn't hit then hit atmosphere
+        # if Earth surface isn't hit then hit atmosphere (one or the other needs to be hit)
         distance = fun.surface_intersection(ray_origin, ray_direction)
         if distance < 0:
             distance = fun.atmosphere_intersection(ray_origin, ray_direction)
-        # pick a random point between origin and end of distance
+        # pick a random point between origin and end of ray
         ray_length = random(0, 1) * distance
-        # send ray to sun, it has to end in atmosphere otherwise return black
+        # send ray to sun, it has to end in atmosphere otherwise return black (?)
         ray_end = ray_origin + ray_direction * ray_length
         ray_length_sun = fun.surface_intersection(ray_end, sun_direction)
         if ray_length_sun < 0:
@@ -72,7 +80,7 @@ def multiple_scattering(ray_direction):
         mu = np.dot(ray_direction, sun_direction)
         phase_R = fun.phase_rayleigh(mu)
         phase_M = fun.phase_mie(mu)
-        # density
+        # densities on scattering point
         height = sqrt(np.dot(ray_end, ray_end)) - EARTH_RADIUS
         density_R = fun.density_rayleigh(height)
         density_M = fun.density_mie(height)
@@ -85,6 +93,7 @@ def multiple_scattering(ray_direction):
         ray_direction = np.array(
             [random(-1, 1), random(-1, 1), random(-1, 1)])
 
+        # accumulate light
         throughput += SUN_IRRADIANCE * transmittance * scattering * transmittance_sun
 
     return throughput
